@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { SunIcon, MoonIcon } from 'lucide-react';
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../app/api/chat/firebase";
+import { auth } from "./firebase";
 import { useUser } from '@clerk/nextjs';
 import { FirebaseError } from "firebase/app";
 

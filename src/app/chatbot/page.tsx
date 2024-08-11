@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { db, getFirebaseApp, initFirebase } from '@/app/api/chat/firebase';
+import { db, getFirebaseApp, initFirebase } from '@/app/firebase';
 import { doc, getDoc, getFirestore, setDoc } from "firebase/firestore";
 import { useUser } from '@clerk/nextjs';
 import { useSearchParams } from "next/navigation";
