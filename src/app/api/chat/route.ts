@@ -1,6 +1,6 @@
 import Groq from "groq-sdk";
 import { NextResponse, NextRequest } from "next/server";
-import { getPrompt } from "../../../../utils/prompt";
+import { getPrompt } from "../../../utils/prompt";
 import { NextApiResponse } from "next";
 
 const options = {
