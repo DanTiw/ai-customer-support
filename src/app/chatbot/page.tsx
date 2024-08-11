@@ -47,9 +47,9 @@ const HeadstarterChatbot = () => {
     }
   }, [assistantName]);
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+//   useEffect(() => {
+//     scrollToBottom();
+//   }, [messages]);
 
   useEffect(() => {
     if (user && email) {
@@ -57,11 +57,11 @@ const HeadstarterChatbot = () => {
     }
   }, [user, email, assistantName]);
 
-  const scrollToBottom = () => {
-    if (latestMessageRef.current) {
-      latestMessageRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
+//   const scrollToBottom = () => {
+//     if (latestMessageRef.current) {
+//       latestMessageRef.current.scrollIntoView({ behavior: 'smooth' });
+//     }
+//   };
 
   const fetchConversation = async (email: string, assistantName: string) => {
     const conversationRef = doc(db, "conversations", email);
