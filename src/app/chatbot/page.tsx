@@ -5,12 +5,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { db } from '@/app/api/chat/firebase';
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { db, getFirebaseApp, initFirebase } from '@/app/api/chat/firebase';
+import { doc, getDoc, getFirestore, setDoc } from "firebase/firestore";
 import { useUser } from '@clerk/nextjs';
 import { useSearchParams } from "next/navigation";
 import { notFound } from "next/navigation";
 import { useTheme } from "next-themes";
+
+useEffect(() => {
+    initFirebase();
+  }, []);
 
 type Message = {
   role: "user" | "assistant";
@@ -47,9 +51,9 @@ const HeadstarterChatbot = () => {
     }
   }, [assistantName]);
 
-//   useEffect(() => {
-//     scrollToBottom();
-//   }, [messages]);
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   useEffect(() => {
     if (user && email) {
@@ -57,13 +61,17 @@ const HeadstarterChatbot = () => {
     }
   }, [user, email, assistantName]);
 
-//   const scrollToBottom = () => {
-//     if (latestMessageRef.current) {
-//       latestMessageRef.current.scrollIntoView({ behavior: 'smooth' });
-//     }
-//   };
+  const scrollToBottom = () => {
+    if (latestMessageRef.current) {
+      latestMessageRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   const fetchConversation = async (email: string, assistantName: string) => {
+    const app = getFirebaseApp();
+    if (!app) return;
+
+    const db = getFirestore(app);
     const conversationRef = doc(db, "conversations", email);
     const docSnap = await getDoc(conversationRef);
     if (docSnap.exists()) {
@@ -74,6 +82,10 @@ const HeadstarterChatbot = () => {
   };
 
   const saveConversation = async (email: string, assistantName: string, conversation: Message[]) => {
+    const app = getFirebaseApp();
+    if (!app) return;
+
+    const db = getFirestore(app);
     const conversationRef = doc(db, "conversations", email);
     const docSnap = await getDoc(conversationRef);
     let allConversations = docSnap.exists() ? docSnap.data() : {};

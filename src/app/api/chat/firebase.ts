@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 "use client"
 import firebase from 'firebase/app';
-import { initializeApp } from "firebase/app";
+import { getApps, initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { getAnalytics } from "firebase/analytics"; // Corrected import
@@ -31,4 +31,17 @@ const db = getFirestore(app);
 // Initialize Firebase Auth
 const auth = getAuth(app);
 
+export const initFirebase = () => {
+  if (typeof window !== 'undefined' && !getApps().length) {
+    const app = initializeApp(firebaseConfig);
+    return getFirestore(app);
+  }
+};
+
+export const getFirebaseApp = () => {
+  if (typeof window !== 'undefined') {
+    return getApps()[0];
+  }
+  return null;
+};
 export { db, auth };
