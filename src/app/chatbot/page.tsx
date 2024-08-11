@@ -5,6 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { db } from '../../app/api/chat/firebase';
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { useUser } from '@clerk/nextjs';
 
 type Message = {
   role: 'user' | 'assistant';
@@ -17,6 +20,11 @@ const HeadstarterChatbot = () => {
   const [isLoading, setIsLoading] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const latestMessageRef = useRef<HTMLDivElement>(null);
+  
+  const { user } = useUser();
+  // Ensure the email is available
+  const email = user?.emailAddresses[0]?.emailAddress;
+ 
 
   useEffect(() => {
     scrollToBottom();
@@ -27,6 +35,29 @@ const HeadstarterChatbot = () => {
       latestMessageRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   };
+
+  useEffect(() => {
+    if (user) {
+      fetchConversation(user.emailAddresses[0].emailAddress); // Fetch user conversation on login
+    }
+  }, [user]);
+
+  const fetchConversation = async (email: string) => {
+    
+    const conversationRef = doc(db, "conversations", email);
+    const docSnap = await getDoc(conversationRef);
+    if (docSnap.exists()) {
+      const fetchedMessages = docSnap.data().conversation || [];
+      
+      setMessages(fetchedMessages); // Ensure conversation is an array
+    } 
+  };
+  const saveConversation = async (email: string, conversation: Message[]) => {
+   
+    const conversationRef = doc(db, "conversations", email);
+    await setDoc(conversationRef, { conversation });
+  };
+
 
   const handleSend = async () => {
     if (input.trim() === '') return;
@@ -67,14 +98,24 @@ const HeadstarterChatbot = () => {
         botMessage.content += chunk;
         setMessages(prev => [...prev.slice(0, -1), { ...botMessage }]);
       }
+      
+      if (email) {
+        await saveConversation(email, [...messages, userMessage, botMessage]);
+      }
+
     } catch (error) {
       console.error('Error:', error);
       const errorMessage: Message = { role: 'assistant', content: 'Sorry, I encountered an error. Please try again.' };
       setMessages(prev => [...prev, errorMessage]);
+      if (email) {
+        await saveConversation(email, [...messages, userMessage, errorMessage]);
+      }
     } finally {
       setIsLoading(false);
     }
   };
+
+
 
   return (
     <Card className="w-full max-w-4xl mx-auto">

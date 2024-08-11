@@ -7,6 +7,11 @@ import { useTheme } from 'next-themes';
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { SunIcon, MoonIcon } from 'lucide-react';
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../app/api/chat/firebase"; // Import Firebase Auth instance
+import { useEffect, useState } from "react";
+import { useUser } from '@clerk/nextjs';
+import { FirebaseError } from "firebase/app"; // Import FirebaseError
 
 function ModeToggle() {
   const { setTheme } = useTheme();
@@ -36,6 +41,35 @@ function ModeToggle() {
 }
 
 const Navbar = () => {
+  const { user } = useUser();
+
+  useEffect(() => {
+    const createFirebaseUser = async () => {
+      if (user) {
+        try {
+          const email = user.emailAddresses[0]?.emailAddress;
+          const password = user.id; // Using Clerk user ID as the password
+
+          if (email) {
+            await createUserWithEmailAndPassword(auth, email, password);
+            console.log("Firebase user created successfully");
+          } else {
+            console.error("User does not have an email address.");
+          }
+        } catch (error) {
+          const firebaseError = error as FirebaseError; // Type assertion
+
+          if (firebaseError.code === "auth/email-already-in-use") {
+            console.log("User already exists in Firebase, skipping creation.");
+          } else {
+            console.error("Error creating Firebase user:", firebaseError);
+          }
+        }
+      }
+    };
+
+    createFirebaseUser();
+  }, [user]);
   return (
     <nav className="bg-white dark:bg-slate-950 shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -51,11 +85,7 @@ const Navbar = () => {
             <SignedOut>
               <SignInButton mode="modal">
                 <Button variant="ghost" className="hidden sm:inline-flex">Sign in</Button>
-                <Button variant="ghost" size="icon" className="sm:hidden">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-                  </svg>
-                </Button>
+                
               </SignInButton>
             </SignedOut>
           </div>
