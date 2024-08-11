@@ -4,6 +4,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useSearchParams } from "next/navigation";
 // import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 type Message = {
@@ -12,6 +13,9 @@ type Message = {
 };
 
 const HeadstarterChatbot = () => {
+	const params = useSearchParams();
+	const assistantName = params.get("assistantName") || "assistant";
+
 	const [messages, setMessages] = useState<Message[]>([]);
 	const [input, setInput] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
@@ -37,16 +41,19 @@ const HeadstarterChatbot = () => {
 		setIsLoading(true);
 
 		try {
-			const response = await fetch("api/chat", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify([
-					...messages,
-					{ role: "user", content: input },
-				]),
-			});
+			const response = await fetch(
+				`api/chat?assistantName=${assistantName}`,
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify([
+						...messages,
+						{ role: "user", content: input },
+					]),
+				}
+			);
 
 			if (!response.ok) {
 				throw new Error("Failed to fetch response");

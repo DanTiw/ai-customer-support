@@ -30,6 +30,7 @@ const LandingPage = () => {
 						className="rounded-lg"
 					/>
 				</div>
+				<div></div>
 			</CardContent>
 			<CardFooter className="flex justify-center">
 				<SignInButton mode="modal">
