@@ -1,17 +1,16 @@
 "use client";
 
-import React from "react";
-import Link from "next/link";
-import { SignedIn, SignedOut, UserButton, SignInButton } from "@clerk/nextjs";
-import { useTheme } from "next-themes";
+import React, { useEffect } from 'react';
+import Link from 'next/link';
+import { SignedIn, SignedOut, UserButton, SignInButton } from '@clerk/nextjs';
+import { useTheme } from 'next-themes';
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { SunIcon, MoonIcon } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { SunIcon, MoonIcon } from 'lucide-react';
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../app/api/chat/firebase";
+import { useUser } from '@clerk/nextjs';
+import { FirebaseError } from "firebase/app";
 
 function ModeToggle() {
   const { setTheme } = useTheme();
@@ -45,6 +44,36 @@ function ModeToggle() {
 }
 
 const Navbar = () => {
+  const { user } = useUser();
+
+  useEffect(() => {
+    const createFirebaseUser = async () => {
+      if (user) {
+        try {
+          const email = user.emailAddresses[0]?.emailAddress;
+          const password = user.id; // Using Clerk user ID as the password
+
+          if (email) {
+            await createUserWithEmailAndPassword(auth, email, password);
+            console.log("Firebase user created successfully");
+          } else {
+            console.error("User does not have an email address.");
+          }
+        } catch (error) {
+          const firebaseError = error as FirebaseError;
+
+          if (firebaseError.code === "auth/email-already-in-use") {
+            console.log("User already exists in Firebase, skipping creation.");
+          } else {
+            console.error("Error creating Firebase user:", firebaseError);
+          }
+        }
+      }
+    };
+
+    createFirebaseUser();
+  }, [user]);
+
   return (
     <nav className="bg-white dark:bg-slate-950 shadow-md transition-colors duration-300 ease-in-out">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -53,7 +82,7 @@ const Navbar = () => {
             href="/"
             className="text-xl font-bold text-gray-800 dark:text-white shrink-0 transition-colors duration-300 ease-in-out hover:text-blue-600 dark:hover:text-blue-400"
           >
-            Customer Support
+            Chatify
           </Link>
           <div className="flex items-center space-x-2 sm:space-x-4">
             <ModeToggle />

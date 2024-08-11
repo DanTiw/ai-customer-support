@@ -14,22 +14,16 @@ const LandingPage = () => {
 		<Card className="w-full max-w-2xl mx-auto">
 			<CardHeader>
 				<CardTitle className="text-3xl font-bold text-center">
-					Welcome to Danish's Assistant
+					Welcome to Chatify
 				</CardTitle>
 			</CardHeader>
 			<CardContent>
 				<p className="text-center mb-6">
-					Get instant answers and assistance with our AI-powered
-					chatbot. Whether you have questions about Headstarter or
+					Get instant answers and assistance with our various AI-powered
+					chatbots. Whether you have questions about Coding or
 					need general information, we're here to help!
 				</p>
-				<div className="flex justify-center">
-					<img
-						src="/api/placeholder/400/300"
-						alt="Chatbot illustration"
-						className="rounded-lg"
-					/>
-				</div>
+			
 				<div></div>
 			</CardContent>
 			<CardFooter className="flex justify-center">
