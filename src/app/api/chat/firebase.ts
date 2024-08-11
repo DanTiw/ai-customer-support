@@ -22,13 +22,13 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-console.log('Initializing Firebase app');
+
 const app = initializeApp(firebaseConfig);
-console.log('Firebase app initialized:', app);
+
 const analytics = getAnalytics(app);
 // Initialize Firestore
 const db = getFirestore(app);
 // Initialize Firebase Auth
 const auth = getAuth(app);
-console.log('Firebase services initialized:', { analytics, db, auth });
+
 export { db, auth };
