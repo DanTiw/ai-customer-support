@@ -41,6 +41,7 @@ function ModeToggle() {
 }
 
 const Navbar = () => {
+
 	return (
 		<nav className="bg-white dark:bg-slate-950 shadow-md">
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -87,6 +88,7 @@ const Navbar = () => {
 			</div>
 		</nav>
 	);
+
 };
 
 export default Navbar;
