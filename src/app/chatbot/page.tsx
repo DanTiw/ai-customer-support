@@ -5,8 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { db } from '@/app/firebase';
-import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useUser } from '@clerk/nextjs';
 import { useSearchParams } from "next/navigation";
 import { notFound } from "next/navigation";
@@ -51,34 +49,10 @@ const HeadstarterChatbot = () => {
     scrollToBottom();
   }, [messages]);
 
-  useEffect(() => {
-    if (user && email) {
-      fetchConversation(email, assistantName);
-    }
-  }, [user, email, assistantName]);
-
   const scrollToBottom = () => {
     if (latestMessageRef.current) {
       latestMessageRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-  };
-
-  const fetchConversation = async (email: string, assistantName: string) => {
-    const conversationRef = doc(db, "conversations", email);
-    const docSnap = await getDoc(conversationRef);
-    if (docSnap.exists()) {
-      const allConversations = docSnap.data();
-      const fetchedMessages = allConversations[assistantName] || [];
-      setMessages(fetchedMessages);
-    }
-  };
-
-  const saveConversation = async (email: string, assistantName: string, conversation: Message[]) => {
-    const conversationRef = doc(db, "conversations", email);
-    const docSnap = await getDoc(conversationRef);
-    let allConversations = docSnap.exists() ? docSnap.data() : {};
-    allConversations[assistantName] = conversation;
-    await setDoc(conversationRef, allConversations);
   };
 
   const handleSend = async () => {
@@ -120,18 +94,11 @@ const HeadstarterChatbot = () => {
         botMessage.content += chunk;
         setMessages(prev => [...prev.slice(0, -1), { ...botMessage }]);
       }
-      
-      if (email) {
-        await saveConversation(email, assistantName, [...messages, userMessage, botMessage]);
-      }
 
     } catch (error) {
       console.error('Error:', error);
       const errorMessage: Message = { role: 'assistant', content: 'Sorry, I encountered an error. Please try again.' };
       setMessages(prev => [...prev, errorMessage]);
-      if (email) {
-        await saveConversation(email, assistantName, [...messages, userMessage, errorMessage]);
-      }
     } finally {
       setIsLoading(false);
     }
