@@ -1,4 +1,4 @@
-"use client";
+
 import React from "react";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 import HeadstarterChatbot from "@/app/chatbot/page";

@@ -1,4 +1,4 @@
-"use client"
+
 import React from "react";
 import { SignInButton } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
