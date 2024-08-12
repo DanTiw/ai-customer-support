@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
+import ReactMarkdown from "react-markdown";  // Import react-markdown
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,10 +12,6 @@ import { useUser } from "@clerk/nextjs";
 import { useSearchParams } from "next/navigation";
 import { notFound } from "next/navigation";
 import { useTheme } from "next-themes";
-
-useEffect(() => {
-	initFirebase();
-}, []);
 
 type Message = {
 	role: "user" | "assistant";
@@ -44,6 +41,10 @@ const HeadstarterChatbot = () => {
 	const params = useSearchParams();
 	const assistantName = params.get("assistantName") || "assistant";
 	const { theme } = useTheme();
+
+	useEffect(() => {
+		initFirebase();
+	}, []);
 
 	useEffect(() => {
 		if (!validAssistantNames.includes(assistantName)) {
@@ -105,7 +106,7 @@ const HeadstarterChatbot = () => {
 
 		try {
 			const response = await fetch(
-				`api/chat?assistantName=${assistantName}`,
+				`/api/chat?assistantName=${assistantName}`,
 				{
 					method: "POST",
 					headers: {
@@ -203,9 +204,9 @@ const HeadstarterChatbot = () => {
 											? "bg-blue-500 text-white dark:bg-blue-600"
 											: "bg-gray-200 text-black dark:bg-gray-700 dark:text-white"
 									} hover:shadow-md`}>
-									<p className="whitespace-pre-line">
+									<ReactMarkdown className="whitespace-pre-line">
 										{message.content}
-									</p>
+									</ReactMarkdown>
 								</div>
 							</div>
 						</div>
@@ -227,7 +228,7 @@ const HeadstarterChatbot = () => {
 						placeholder="Ask about Customer Support..."
 						value={input}
 						onChange={e => setInput(e.target.value)}
-						onKeyPress={e => e.key === "Enter" && handleSend()}
+						onKeyDown={e => e.key === "Enter" && handleSend()}
 						className="flex-grow transition-all duration-300 ease-in-out focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600"
 					/>
 					<Button
