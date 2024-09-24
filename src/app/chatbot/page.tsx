@@ -25,16 +25,19 @@ const validAssistantNames = [
   "emotion"
 ];
 
+/**
+ * Component for rendering a chatbot page.
+ */
 const HeadstarterChatbot = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const latestMessageRef = useRef<HTMLDivElement>(null);
-  
+
   const { user } = useUser();
   const email = user?.emailAddresses[0]?.emailAddress;
-  
+
   const params = useSearchParams();
   const assistantName = params.get("assistantName") || "assistant";
   const { theme } = useTheme();
@@ -54,7 +57,7 @@ const HeadstarterChatbot = () => {
       latestMessageRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   };
-
+//sending the message to the chatbot
   const handleSend = async () => {
     if (input.trim() === '') return;
 
@@ -109,8 +112,8 @@ const HeadstarterChatbot = () => {
       <CardContent>
         <ScrollArea className="h-[500px] pt-4 overflow-y-auto" ref={scrollAreaRef}>
           {messages.map((message, index) => (
-            <div 
-              key={index} 
+            <div
+              key={index}
               className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'} mb-4 animate-fadeIn`}
               ref={index === messages.length - 1 ? latestMessageRef : null}
             >
@@ -118,9 +121,8 @@ const HeadstarterChatbot = () => {
                 <Avatar className="w-8 h-8">
                   <AvatarFallback>{message.role === 'user' ? 'U' : 'A'}</AvatarFallback>
                 </Avatar>
-                <div className={`mx-2 p-3 rounded-lg transition-all duration-300 ease-in-out ${
-                  message.role === 'user' ? 'bg-blue-500 text-white dark:bg-blue-600' : 'bg-gray-200 text-black dark:bg-gray-700 dark:text-white'
-                } hover:shadow-md`}>
+                <div className={`mx-2 p-3 rounded-lg transition-all duration-300 ease-in-out ${message.role === 'user' ? 'bg-blue-500 text-white dark:bg-blue-600' : 'bg-gray-200 text-black dark:bg-gray-700 dark:text-white'
+                  } hover:shadow-md`}>
                   <p className="whitespace-pre-line">{message.content}</p>
                 </div>
               </div>
@@ -146,8 +148,8 @@ const HeadstarterChatbot = () => {
             onKeyPress={(e) => e.key === 'Enter' && handleSend()}
             className="flex-grow transition-all duration-300 ease-in-out focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600"
           />
-          <Button 
-            onClick={handleSend} 
+          <Button
+            onClick={handleSend}
             disabled={isLoading}
             className="transition-all duration-300 ease-in-out bg-blue-500 hover:bg-blue-600 text-white dark:bg-blue-600 dark:hover:bg-blue-700"
           >
