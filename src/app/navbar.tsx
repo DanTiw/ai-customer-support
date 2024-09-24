@@ -46,7 +46,7 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-16">
           <Link
             href="/"
-            className="text-xl font-bold text-gray-800 dark:text-white scale-105 transition-colors duration-300 ease-in-out hover:text-blue-600 dark:hover:text-blue-400"
+            className="text-xl font-bold text-gray-800 dark:text-white hover:scale-105 transition-colors duration-300 ease-in-out hover:text-blue-600 dark:hover:text-blue-400"
           >
             Chatify
           </Link>
